@@ -51,6 +51,7 @@ public abstract class SortWithHelper<X extends Comparable<X>> implements Sort<X>
      * @param xs the array to be post-processed.
      */
     public void postProcess(X[] xs) {
+        System.out.println();
         helper.postProcess(xs);
     }
 

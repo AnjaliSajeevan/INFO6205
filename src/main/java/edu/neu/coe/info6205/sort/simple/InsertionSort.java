@@ -8,6 +8,8 @@ import edu.neu.coe.info6205.sort.Helper;
 import edu.neu.coe.info6205.sort.SortWithHelper;
 import edu.neu.coe.info6205.util.Config;
 
+
+
 public class InsertionSort<X extends Comparable<X>> extends SortWithHelper<X> {
 
     /**
@@ -41,7 +43,9 @@ public class InsertionSort<X extends Comparable<X>> extends SortWithHelper<X> {
      * @param helper an explicit instance of Helper to be used.
      */
     public InsertionSort(Helper<X> helper) {
+
         super(helper);
+
     }
 
     /**
@@ -54,7 +58,11 @@ public class InsertionSort<X extends Comparable<X>> extends SortWithHelper<X> {
     public void sort(X[] xs, int from, int to) {
         final Helper<X> helper = getHelper();
 
-        // TO BE IMPLEMENTED
+        for (int i = from + 1; i < to; i++) {
+            for (int j = i; j > from && helper.less(xs[j], xs[j - 1]); j--) {
+                helper.swap(xs, j-1, j );
+            }
+        }
     }
 
     /**
@@ -64,7 +72,10 @@ public class InsertionSort<X extends Comparable<X>> extends SortWithHelper<X> {
      * @param <Y> the underlying element type.
      */
     public static <Y extends Comparable<Y>> void mutatingInsertionSort(Y[] ys) {
+
         new InsertionSort<Y>().mutatingSort(ys);
+
+
     }
 
     public static final String DESCRIPTION = "Insertion sort";

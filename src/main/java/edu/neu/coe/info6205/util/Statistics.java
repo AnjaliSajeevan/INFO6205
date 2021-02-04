@@ -22,12 +22,15 @@ public class Statistics {
         if (total == null) {
             double sum = 0;
             for (int i = 0; i < count; i++) sum += doubles[i];
+            System.out.println("Count:"+count);
             total = sum;
+            System.out.println("total:"+total);
         }
         return total;
     }
 
     public double mean() {
+        System.out.println("Total is:"+total());
         return total() / count;
     }
 

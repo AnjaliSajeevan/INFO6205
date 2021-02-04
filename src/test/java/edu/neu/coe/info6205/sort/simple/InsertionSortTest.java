@@ -53,9 +53,12 @@ public class InsertionSortTest {
         Integer[] xs = list.toArray(new Integer[0]);
         BaseHelper<Integer> helper = new BaseHelper<>("InsertionSort", xs.length);
         GenericSort<Integer> sorter = new InsertionSort<Integer>(helper);
+
+
         Integer[] ys = sorter.sort(xs);
+
         assertTrue(helper.sorted(ys));
-        System.out.println(sorter.toString());
+
     }
 
     @Test
@@ -93,7 +96,6 @@ public class InsertionSortTest {
         assertEquals(1.0, 4.0 * compares / n / (n - 1), 0.12);
         final int inversions = (int) statPack.getStatistics(InstrumentedHelper.INVERSIONS).mean();
         final int fixes = (int) statPack.getStatistics(InstrumentedHelper.FIXES).mean();
-        System.out.println(statPack);
         assertEquals(inversions, fixes);
     }
 

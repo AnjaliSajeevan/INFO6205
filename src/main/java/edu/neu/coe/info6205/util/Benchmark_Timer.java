@@ -4,6 +4,11 @@
 
 package edu.neu.coe.info6205.util;
 
+import edu.neu.coe.info6205.sort.simple.InsertionSort;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Random;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -119,10 +124,120 @@ public class Benchmark_Timer<T> implements Benchmark<T> {
         this(description, null, f, null);
     }
 
+
     private final String description;
     private final UnaryOperator<T> fPre;
     private final Consumer<T> fRun;
     private final Consumer<T> fPost;
 
     final static LazyLogger logger = new LazyLogger(Benchmark_Timer.class);
+
+        public static void main(String[] args) {
+
+            InsertionSort Insort = new InsertionSort();
+            Benchmark_Timer<Integer[]> newTimer = new Benchmark_Timer<>("Benchmark Test", null, (x) -> Insort.sort(x, 0, x.length), null);
+            Random random = new Random();
+            int m=20;
+            System.out.println();
+            System.out.println("Random Array");
+            System.out.println();
+
+            for (int n = 500; n < 20000; n = n * 2) {
+            int num = n;
+
+            Supplier<Integer[]> supplier = new Supplier<Integer[]>() {
+                @Override
+                public Integer[] get() {
+
+                    Integer[] randomArray = new Integer[num];
+                    for (int i = 0; i < num; i++) {
+                        randomArray[i] = random.nextInt(num);
+                    }
+//                    System.out.println("random array" + Arrays.toString(randomArray));
+                    return randomArray;
+                }
+            };
+
+            double t = newTimer.runFromSupplier(supplier, m);
+
+            System.out.println("For N: " + n + " the time taken is: " + t);
+        }
+            System.out.println();
+            System.out.println("Ordered Array");
+            System.out.println();
+
+            for (int n = 500; n < 20000; n = n * 2) {
+                int num = n;
+                Supplier<Integer[]> supplier = new Supplier<Integer[]>() {
+                    @Override
+                    public Integer[] get() {
+                        Integer[] orderedArray = new Integer[num];
+                        for (int i = 0; i < num; i++) {
+                            orderedArray[i] = i;
+                        }
+//                        System.out.println("ordered array" + Arrays.toString(orderedArray));
+                        return orderedArray;
+                    }
+                };
+
+                double t = newTimer.runFromSupplier(supplier, m);
+
+                System.out.println("For N: " + n  + " the time taken is: " + t);
+            }
+
+            System.out.println();
+            System.out.println("Partially Ordered Array");
+            System.out.println();
+
+
+            for (int n = 500; n < 20000; n = n * 2) {
+                int num = n;
+                Supplier<Integer[]> supplier = new Supplier<Integer[]>() {
+                    @Override
+                    public Integer[] get() {
+
+                        Integer[] partiallyOrderedArray = new Integer[num];
+                        int rearrange = (int) (0.5 * num);
+                        for (int i = 0; i < rearrange; i++) {
+                            partiallyOrderedArray[i] = i;
+                        }
+                        for (int i = rearrange; i < num; i++) {
+                            partiallyOrderedArray[i] = random.nextInt(num);
+                        }
+//                        System.out.println("part ordered array" + Arrays.toString(partiallyOrderedArray));
+                        return partiallyOrderedArray;
+                    }
+
+                };
+                double t = newTimer.runFromSupplier(supplier, m);
+
+                System.out.println("For N: " + n + " the time taken is: " + t);
+            }
+
+            System.out.println();
+            System.out.println("Reversed Array");
+            System.out.println();
+
+            for (int n = 500; n < 20000; n = n * 2) {
+                int num = n;
+                Supplier<Integer[]> supplier = new Supplier<Integer[]>() {
+                    @Override
+                    public Integer[] get() {
+                        Integer[] reverseArray = new Integer[num];
+                        for (int i = 0; i < num; i++) {
+                            reverseArray[i] = num - i;
+                        }
+//                        System.out.println("reverse array" + Arrays.toString(reverseArray));
+                        return reverseArray;
+
+                    }
+                };
+
+                double t = newTimer.runFromSupplier(supplier, m);
+
+                System.out.println("For N: " +n+ " the time taken is: " + t);
+            }
+            System.out.println();
+
+    }
 }
