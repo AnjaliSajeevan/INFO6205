@@ -4,7 +4,11 @@
 
 package edu.neu.coe.info6205.util;
 
+import edu.neu.coe.info6205.sort.Helper;
+import edu.neu.coe.info6205.sort.HelperFactory;
+import edu.neu.coe.info6205.sort.SortWithHelper;
 import edu.neu.coe.info6205.sort.simple.InsertionSort;
+import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,6 +19,7 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 import static edu.neu.coe.info6205.util.Utilities.formatWhole;
+import static org.junit.Assert.assertTrue;
 
 /**
  * This class implements a simple Benchmark utility for measuring the running time of algorithms.
@@ -134,8 +139,22 @@ public class Benchmark_Timer<T> implements Benchmark<T> {
 
         public static void main(String[] args) {
 
+            final Config config = ConfigTest.setupConfig("true", "0", "1", "", "");
+            int n = 100;
+            Helper<Integer> helper = HelperFactory.create("InsertionSort", n, config);
+            helper.init(n);
+            final PrivateMethodTester privateMethodTester = new PrivateMethodTester(helper);
+            final StatPack statPack = (StatPack) privateMethodTester.invokePrivate("getStatPack");
+            Integer[] xs = helper.random(Integer.class, r -> r.nextInt(1000));
+            SortWithHelper<Integer> sorter = new InsertionSort<Integer>(helper);
+            sorter.preProcess(xs);
+            Integer[] ys = sorter.sort(xs);
+            assertTrue(helper.sorted(ys));
+            sorter.postProcess(ys);
+
             InsertionSort Insort = new InsertionSort();
-            Benchmark_Timer<Integer[]> newTimer = new Benchmark_Timer<>("Benchmark Test", null, (x) -> Insort.sort(x, 0, x.length), null);
+
+
             Random random = new Random();
             int m=20;
             System.out.println();
@@ -157,7 +176,7 @@ public class Benchmark_Timer<T> implements Benchmark<T> {
                     return randomArray;
                 }
             };
-
+            Benchmark_Timer<Integer[]> newTimer = new Benchmark_Timer<>("Benchmark Test", null, (x) -> Insort.sort(x, 0, x.length), null);
             double t = newTimer.runFromSupplier(supplier, m);
 
             System.out.println("For N: " + n + " the time taken is: " + t);
