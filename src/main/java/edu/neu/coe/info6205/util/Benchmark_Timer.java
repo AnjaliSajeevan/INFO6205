@@ -130,27 +130,10 @@ public class Benchmark_Timer<T> implements Benchmark<T> {
     }
 
 
-    private final String description;
-    private final UnaryOperator<T> fPre;
-    private final Consumer<T> fRun;
-    private final Consumer<T> fPost;
 
-    final static LazyLogger logger = new LazyLogger(Benchmark_Timer.class);
 
         public static void main(String[] args) {
 
-            final Config config = ConfigTest.setupConfig("true", "0", "1", "", "");
-            int n = 100;
-            Helper<Integer> helper = HelperFactory.create("InsertionSort", n, config);
-            helper.init(n);
-            final PrivateMethodTester privateMethodTester = new PrivateMethodTester(helper);
-            final StatPack statPack = (StatPack) privateMethodTester.invokePrivate("getStatPack");
-            Integer[] xs = helper.random(Integer.class, r -> r.nextInt(1000));
-            SortWithHelper<Integer> sorter = new InsertionSort<Integer>(helper);
-            sorter.preProcess(xs);
-            Integer[] ys = sorter.sort(xs);
-            assertTrue(helper.sorted(ys));
-            sorter.postProcess(ys);
 
             InsertionSort Insort = new InsertionSort();
 
@@ -160,6 +143,7 @@ public class Benchmark_Timer<T> implements Benchmark<T> {
             System.out.println();
             System.out.println("Random Array");
             System.out.println();
+            Benchmark_Timer<Integer[]> newTimer = new Benchmark_Timer<>("Benchmark Test", null, (x) -> Insort.sort(x, 0, x.length), null);
 
             for (int n = 500; n < 20000; n = n * 2) {
             int num = n;
@@ -176,7 +160,7 @@ public class Benchmark_Timer<T> implements Benchmark<T> {
                     return randomArray;
                 }
             };
-            Benchmark_Timer<Integer[]> newTimer = new Benchmark_Timer<>("Benchmark Test", null, (x) -> Insort.sort(x, 0, x.length), null);
+
             double t = newTimer.runFromSupplier(supplier, m);
 
             System.out.println("For N: " + n + " the time taken is: " + t);
@@ -259,4 +243,11 @@ public class Benchmark_Timer<T> implements Benchmark<T> {
             System.out.println();
 
     }
+
+    private final String description;
+    private final UnaryOperator<T> fPre;
+    private final Consumer<T> fRun;
+    private final Consumer<T> fPost;
+
+    final static LazyLogger logger = new LazyLogger(Benchmark_Timer.class);
 }

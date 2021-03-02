@@ -8,12 +8,11 @@
 package edu.neu.coe.info6205.union_find;
 
 import java.util.Arrays;
-import java.util.Random;
 
 /**
- * Height-weighted Quick Union with Path Compression
+ * Depth-weighted Quick Union
  */
-public class UF_HWQUPC implements UF {
+public class UF_DWQU implements UF {
     /**
      * Ensure that site p is connected to site q,
      *
@@ -29,20 +28,18 @@ public class UF_HWQUPC implements UF {
      * {@code 0} through {@code n-1}. Each site is initially in its own
      * component.
      *
-     * @param n               the number of sites
-     * @param pathCompression whether to use path compression
+     * @param n the number of sites
      * @throws IllegalArgumentException if {@code n < 0}
      */
-    public UF_HWQUPC(int n, boolean pathCompression) {
+    public UF_DWQU(int n) {
         count = n;
         parent = new int[n];
-        height = new int[n];
+        depth = new int[n];
         for (int i = 0; i < n; i++) {
             parent[i] = i;
-            height[i] = 1;
+            depth[i] = 0;
         }
-
-        this.pathCompression = pathCompression;
+//        this.pathCompression = pathCompression;
     }
 
     /**
@@ -50,17 +47,17 @@ public class UF_HWQUPC implements UF {
      * {@code 0} through {@code n-1}. Each site is initially in its own
      * component.
      * This data structure uses path compression
+     * <p>
+     * //     * @param n the number of sites
      *
-     * @param n the number of sites
      * @throws IllegalArgumentException if {@code n < 0}
      */
-    public UF_HWQUPC(int n) {
-        this(n, true);
-    }
-
+//    public UF_DWQU(int n) {
+//        this(n, true);
+//    }
     public void show() {
         for (int i = 0; i < parent.length; i++) {
-            System.out.printf("%d: %d, %d\n", i, parent[i], height[i]);
+            System.out.printf("%d: %d, %d\n", i, parent[i], depth[i]);
         }
     }
 
@@ -85,11 +82,12 @@ public class UF_HWQUPC implements UF {
         int root = p;
         while (root != parent[root]) {
 
-            if (this.pathCompression) {
-                doPathCompression(root);
-            }
+//            if (this.pathCompression) {
+//                doPathCompression(root);
+//            }
             root = parent[root];
         }
+
         return root;
     }
 
@@ -117,7 +115,7 @@ public class UF_HWQUPC implements UF {
      *                                  both {@code 0 <= p < n} and {@code 0 <= q < n}
      */
     public void union(int p, int q) {
-        // CONSIDER can we avoid doing find again?
+
         mergeComponents(find(p), find(q));
         count--;
     }
@@ -129,19 +127,18 @@ public class UF_HWQUPC implements UF {
 
     /**
      * Used only by testing code
-     *
-     * @param pathCompression true if you want path compression
+     * <p>
+     * //     * @param pathCompression true if you want path compression
      */
-    public void setPathCompression(boolean pathCompression) {
-        this.pathCompression = pathCompression;
-    }
-
+//    public void setPathCompression(boolean pathCompression) {
+//        this.pathCompression = pathCompression;
+//    }
     @Override
     public String toString() {
-        return "UF_HWQUPC:" + "\n  count: " + count +
-                "\n  path compression? " + pathCompression +
-                "\n  parents: " + Arrays.toString(parent) +
-                "\n  heights: " + Arrays.toString(height);
+        return "UF_DWQU:" + "\n  count: " + count +
+//                "\n  path compression? " + pathCompression +
+                "\n  parents: " + Arrays.toString(parent)
+                + "\n  depth: " + Arrays.toString(depth);
     }
 
     // validate that p is a valid index
@@ -152,13 +149,13 @@ public class UF_HWQUPC implements UF {
         }
     }
 
-    private void updateParent(int p, int x) {
-        parent[p] = x;
-    }
+//    private void updateParent(int p, int x) {
+//        parent[p] = x;
+//    }
 
-    private void updateHeight(int p, int x) {
-        height[p] += height[x];
-    }
+//    private void updateHeight(int p, int x) {
+//        height[p] += height[x];
+//    }
 
     /**
      * Used only by testing code
@@ -171,37 +168,41 @@ public class UF_HWQUPC implements UF {
     }
 
     private final int[] parent;   // parent[i] = parent of i
-    private final int[] height;   // height[i] = height of subtree rooted at i
+    private final int[] depth;   // depth[i] = depth of subtree rooted at i
     private int count;  // number of components
-    private boolean pathCompression;
+//    private boolean pathCompression;
 
-    private void mergeComponents(int i, int j) {
-        if (i == j) {
+    private void mergeComponents(int p, int q) {
+
+        int rP = find(p);
+        int rQ = find(q);
+        if (rP == rQ) {
             return;
         }
-        if (height[i] < height[j]) {
-            updateParent(i, j);
-            updateHeight(j, i);
+        if (depth[rP] < depth[rQ]) {
+            parent[rP] = rQ;
+        } else if (depth[rP] > depth[rQ]) {
+            parent[rQ] = rP;
         } else {
-            updateParent(j, i);
-            updateHeight(i, j);
+            parent[rQ] = rP;
+            depth[rP]++;
         }
+//        System.out.println(Arrays.toString(depth));
     }
+
 
     /**
      * This implements the single-pass path-halving mechanism of path compression
      */
-    private void doPathCompression(int i) {
-        int y =parent[i];
-        parent[i] = parent[y];
-        updateParent(i, parent[parent[i]]);
+//    private void doPathCompression(int i) {
+//        int y =parent[i];
+//        parent[i] = parent[y];
+//        updateParent(i, parent[parent[i]]);
 
-    }
 
     public static void main(String [] args){
 
-        UF_HWQUPC x=new UF_HWQUPC(4, true);
-
+        UF_DWQU x=new UF_DWQU(4);
 
     }
 
